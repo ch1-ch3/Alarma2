@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="mobile_stack" name="shell-type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400..800;1,7..72,400..800&amp;family=Nunito+Sans:ital,opsz,wght@0,6..12,300..900;1,6..12,300..900&amp;family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        width: 100vw;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      body {
+        overscroll-behavior: none;
+        background-color: #173322;
+        font-family: 'Nunito Sans', sans-serif;
+        color: #f7eedf;
+      }
+      .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom, 16px);
+      }
+      .pt-safe {
+        padding-top: env(safe-area-inset-top, 0px);
+      }
+      main > :first-child {
+        margin-top: 0 !important;
+      }
+      main > :last-child {
+        margin-bottom: 0 !important;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 700, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "forest-bg": "#173322",
+            "forest-surface": "#1e3f2b",
+            "mustard": "#F5B731",
+            "mustard-dark": "#d99e20",
+            "mustard-light": "#fef3c7",
+            "brown-deep": "#2d1b11",
+            "brown-earth": "#4a2e1e",
+            "brown-card": "#fdf7ed",
+            "brown-card-border": "#e3d2be",
+            "brown-text": "#382315",
+            "brown-muted": "#7a5840",
+            "badge-gold": "#fef08a"
+          },
+          fontFamily: {
+            headline: ["Literata", "serif"],
+            body: ["Nunito Sans", "sans-serif"],
+            label: ["Nunito Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#173322] text-[#f7eedf] flex flex-col min-h-screen antialiased font-body selection:bg-mustard selection:text-brown-deep">
+<!-- Header Fijo con estética Verde Bosque / Acento Mostaza -->
+<header class="fixed top-0 inset-x-0 z-50 bg-[#173322]/95 backdrop-blur-md border-b border-[#294c35] pt-safe">
+<div class="h-16 px-4 flex items-center justify-between max-w-lg mx-auto">
+<div class="flex items-center gap-3">
+<button aria-label="Volver" class="w-10 h-10 rounded-full bg-[#1e3f2b] text-[#f7eedf] flex items-center justify-center border border-[#2d563b] shadow-sm active:scale-95 transition-all" onclick="history.back()">
+<span class="material-symbols-outlined text-[20px]">arrow_back</span>
+</button>
+<h1 class="font-headline font-bold text-lg text-[#fbf6ec] tracking-tight">Sala de Conspiración</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex items-center gap-1.5 bg-[#234b33] border border-[#3b7350] px-3 py-1 rounded-full shadow-inner">
+<span class="w-2 h-2 rounded-full bg-mustard animate-pulse"></span>
+<span class="font-label text-xs text-mustard font-black uppercase tracking-wider">ACTIVA</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Contenido Principal -->
+<main class="flex-1 flex flex-col w-full max-w-lg mx-auto px-4 pt-20 pb-32">
+<div class="flex flex-col w-full gap-4">
+<!-- Cabecera de objetivo: Complot contra @nacho con estilo pergamino / marrón cálido -->
+<section class="bg-[#fdf7ed] rounded-2xl p-4 border border-[#e3d2be] shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-brown-text">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-12 h-12 rounded-full overflow-hidden bg-[#ecdcc6] flex items-center justify-center shrink-0 border-2 border-mustard shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Nacho avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcE2orBtWclnzEWkQCLWsFaVOJvQdUHiqzT2aYi2Bu5eC52xMoptGatj66aeoWdwumrI5Wxz3tS_iKipwsYE9_KuA0yV_cKOTN8L6cRqDt_xid7VAWBjH_1ph6wLC5g8zFQDNTabhEM5zAVnJqaCSjG4XBW_w1NkR5_oGB3xylOiHcpC5ezHVMCKz9XxJDWPsY6EdZzXZpB4sbaW3kWYk0CaSFcHdXMjeyBLoPWyQ"/>
+</div>
+<div class="flex flex-col min-w-0">
+<h2 class="font-headline text-[17px] text-[#2d1b11] font-bold truncate">
+              Complot contra <span class="text-[#963e1d] font-extrabold">@nacho</span>
+</h2>
+<p class="font-body text-xs text-[#6e4e37] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[15px] text-[#963e1d]">alarm</span> Alarma 07:00 AM
+            </p>
+</div>
+</div>
+<!-- Chip de tiempo regresivo en marrón tierra cálido -->
+<div class="flex items-center gap-1.5 bg-[#f5e6d3] border border-[#d9bd9c] px-3 py-1.5 rounded-xl shrink-0 self-start sm:self-auto shadow-sm">
+<span class="material-symbols-outlined text-[#8a3818] text-[17px]">hourglass_top</span>
+<span class="font-label text-xs text-[#522b15] font-bold tracking-tight">
+            Cierra en <span class="font-mono font-extrabold text-[#8a3818]" id="countdown">00:14:12</span>
+</span>
+</div>
+</section>
+<!-- Título de sección -->
+<div class="flex items-center justify-between px-1 pt-1">
+<span class="font-headline font-bold text-sm tracking-wide text-[#f5ebd9] uppercase">Audios en Pugna (3)</span>
+<span class="font-label text-xs text-mustard/90 font-semibold">Toca para preescuchar</span>
+</div>
+<!-- Lista de Audios con diseño marrón tierra / café cálido -->
+<div class="flex flex-col gap-3.5">
+<!-- 1. Ganando: @juan -->
+<article class="bg-[#fcf8f2] rounded-2xl p-4 border-2 border-mustard shadow-md flex flex-col gap-3 relative overflow-hidden text-brown-text">
+<div class="absolute top-0 right-0 w-28 h-28 bg-mustard/10 rounded-bl-full pointer-events-none"></div>
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-[#fcedc7] text-[#5c3c0a] border border-[#e8c67c] font-label text-xs font-black shadow-xs flex items-center gap-1">
+                👑 1° Ganando (3 votos)
+              </span>
+</div>
+<span class="font-label text-xs text-[#7a5840] font-bold">0:06 seg</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline text-base font-extrabold text-[#2d1b11] leading-tight">
+              “¡NACHO, SE TE QUEMA LA CASA!”
+            </h3>
+<span class="font-body text-xs text-[#7a5840] font-semibold mt-0.5">
+              Propuesta de <strong class="text-[#2d1b11] font-bold">@juan</strong>
+</span>
+</div>
+<!-- Reproductor de audio con onda cálida -->
+<div class="bg-[#f2e6d6] border border-[#dfcbb3] rounded-xl p-2.5 flex items-center gap-3">
+<button aria-label="Reproducir audio" class="w-10 h-10 shrink-0 rounded-full bg-[#3d2417] text-mustard flex items-center justify-center shadow-md active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<div class="flex-1 flex items-center gap-1 h-7 overflow-hidden">
+<span class="w-1 h-3 rounded-full bg-[#854d27]"></span>
+<span class="w-1 h-6 rounded-full bg-[#854d27]"></span>
+<span class="w-1 h-7 rounded-full bg-mustard"></span>
+<span class="w-1 h-4 rounded-full bg-mustard"></span>
+<span class="w-1 h-5 rounded-full bg-[#854d27]"></span>
+<span class="w-1 h-3 rounded-full bg-[#b89574]"></span>
+<span class="w-1 h-6 rounded-full bg-[#b89574]"></span>
+<span class="w-1 h-4 rounded-full bg-[#c9ab8d]"></span>
+<span class="w-1 h-2 rounded-full bg-[#d9c4ad]"></span>
+<span class="w-1 h-5 rounded-full bg-[#d9c4ad]"></span>
+</div>
+<span class="font-mono text-xs text-[#5c3f2d] font-bold">0:04</span>
+</div>
+<!-- Botón de estado votado -->
+<button class="w-full h-11 rounded-xl bg-[#2e523a] text-[#f7eedf] border border-[#3e6a4c] font-label text-sm font-bold flex items-center justify-center gap-2 shadow-sm active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-mustard text-[19px]">check_circle</span>
+            TU VOTO ACTUAL (Votado)
+          </button>
+</article>
+<!-- 2. Segundo lugar: @tomi -->
+<article class="bg-[#fcf8f2] rounded-2xl p-4 border border-[#e3d2be] shadow-sm flex flex-col gap-3 text-brown-text">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-[#eedfcb] text-[#523522] border border-[#d9c4ad] font-label text-xs font-bold">
+                🥈 2° lugar (2 votos)
+              </span>
+</div>
+<span class="font-label text-xs text-[#7a5840] font-bold">0:09 seg</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline text-base font-extrabold text-[#2d1b11] leading-tight">
+              “Gallo Afónico Metalero 🐔⚡”
+            </h3>
+<span class="font-body text-xs text-[#7a5840] font-semibold mt-0.5">
+              Propuesta de <strong class="text-[#2d1b11] font-bold">@tomi</strong>
+</span>
+</div>
+<!-- Reproductor de audio -->
+<div class="bg-[#f2e6d6] border border-[#dfcbb3] rounded-xl p-2.5 flex items-center gap-3">
+<button aria-label="Reproducir audio" class="w-10 h-10 shrink-0 rounded-full bg-[#ebd6be] text-[#3d2417] flex items-center justify-center border border-[#d6be9f] shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<div class="flex-1 flex items-center gap-1 h-7 overflow-hidden">
+<span class="w-1 h-2 rounded-full bg-[#8c6749]"></span>
+<span class="w-1 h-5 rounded-full bg-[#8c6749]"></span>
+<span class="w-1 h-4 rounded-full bg-[#a37d5c]"></span>
+<span class="w-1 h-7 rounded-full bg-[#a37d5c]"></span>
+<span class="w-1 h-3 rounded-full bg-[#cbaf94]"></span>
+<span class="w-1 h-5 rounded-full bg-[#cbaf94]"></span>
+<span class="w-1 h-2 rounded-full bg-[#dfcebe]"></span>
+</div>
+<span class="font-mono text-xs text-[#5c3f2d] font-bold">0:09</span>
+</div>
+<button class="w-full h-11 rounded-xl bg-[#ebdcc9] hover:bg-[#e2ceb7] text-[#2d1b11] border border-[#cfb99f] font-label text-sm font-bold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-[19px] text-[#963e1d]">how_to_vote</span>
+            Votar este
+          </button>
+</article>
+<!-- 3. Tercer lugar: @valen -->
+<article class="bg-[#fcf8f2] rounded-2xl p-4 border border-[#e3d2be] shadow-sm flex flex-col gap-3 text-brown-text">
+<div class="flex items-center justify-between gap-2">
+<div class="flex items-center gap-1.5">
+<span class="px-2.5 py-0.5 rounded-full bg-[#f0e4d4] text-[#6b4c34] font-label text-xs font-semibold">
+                Sin votos
+              </span>
+</div>
+<span class="font-label text-xs text-[#7a5840] font-bold">0:05 seg</span>
+</div>
+<div class="flex flex-col">
+<h3 class="font-headline text-base font-extrabold text-[#2d1b11] leading-tight">
+              “Bocinazo de Tren Sarmiento 🚆📢”
+            </h3>
+<span class="font-body text-xs text-[#7a5840] font-semibold mt-0.5">
+              Propuesta de <strong class="text-[#2d1b11] font-bold">@valen</strong>
+</span>
+</div>
+<!-- Reproductor de audio -->
+<div class="bg-[#f2e6d6] border border-[#dfcbb3] rounded-xl p-2.5 flex items-center gap-3">
+<button aria-label="Reproducir audio" class="w-10 h-10 shrink-0 rounded-full bg-[#ebd6be] text-[#3d2417] flex items-center justify-center border border-[#d6be9f] shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<div class="flex-1 flex items-center gap-1 h-7 overflow-hidden">
+<span class="w-1 h-3 rounded-full bg-[#cbaf94]"></span>
+<span class="w-1 h-4 rounded-full bg-[#8c6749]"></span>
+<span class="w-1 h-6 rounded-full bg-[#8c6749]"></span>
+<span class="w-1 h-3 rounded-full bg-[#cbaf94]"></span>
+<span class="w-1 h-5 rounded-full bg-[#dfcebe]"></span>
+<span class="w-1 h-2 rounded-full bg-[#dfcebe]"></span>
+</div>
+<span class="font-mono text-xs text-[#5c3f2d] font-bold">0:05</span>
+</div>
+<button class="w-full h-11 rounded-xl bg-[#ebdcc9] hover:bg-[#e2ceb7] text-[#2d1b11] border border-[#cfb99f] font-label text-sm font-bold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all">
+<span class="material-symbols-outlined text-[19px] text-[#963e1d]">how_to_vote</span>
+            Votar este
+          </button>
+</article>
+</div>
+</div>
+</main>
+<!-- Barra inferior de acción: Botón principal en Mostaza Cálido (#F5B731) con texto marrón oscuro y secundario en marrón tierra -->
+<aside class="fixed bottom-0 inset-x-0 z-40 bg-[#173322]/95 backdrop-blur-md border-t border-[#294c35] pb-safe px-4 pt-3">
+<div class="max-w-lg mx-auto flex items-center gap-3">
+<!-- Secundario: Marrón tierra cálido -->
+<button aria-label="Elegir del banco" class="flex-1 h-12 rounded-xl bg-[#4a2e1e] hover:bg-[#3d2417] text-[#faedd9] border border-[#6b4530] font-label text-sm font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-mustard">music_note</span>
+<span>Elegir del banco 🎵</span>
+</button>
+<!-- Principal: Amarillo Mostaza Cálido (#F5B731) con texto e ícono marrón oscuro -->
+<button aria-label="Grabar audio" class="flex-1 h-12 rounded-xl bg-[#F5B731] hover:bg-[#e0a424] text-[#2d1b11] border border-[#fbd375] font-label text-sm font-extrabold flex items-center justify-center gap-1.5 shadow-lg active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined text-[20px] text-[#2d1b11]">mic</span>
+<span>Grabar audio 🎙️</span>
+</button>
+</div>
+</aside>
+<script>
+    let totalSeconds = 14 * 60 + 12;
+    const timerElement = document.getElementById('countdown');
+    
+    if (timerElement) {
+      setInterval(() => {
+        if (totalSeconds > 0) {
+          totalSeconds--;
+          const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+          const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+          const seconds = String(totalSeconds % 60).padStart(2, '0');
+          timerElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+      }, 1000);
+    }
+  </script>
+</body></html>
