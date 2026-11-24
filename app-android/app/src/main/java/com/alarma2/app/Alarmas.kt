@@ -85,6 +85,8 @@ object Almacen {
         val arr = JSONArray()
         lista.forEach { arr.put(it.aJson()) }
         prefs(ctx).edit().putString("lista", arr.toString()).commit()
+        // Copia para los amigos, en otro hilo y después de guardar: nunca frena ni cambia la alarma.
+        Sincro.avisar(ctx)
     }
 
     fun buscar(ctx: Context, id: Int) = todas(ctx).firstOrNull { it.id == id }

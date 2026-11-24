@@ -42,6 +42,14 @@ class MainActivity : Activity() {
     private val refrescoPeriodico = object : Runnable {
         override fun run() { mostrar(); reloj.postDelayed(this, 30_000) }
     }
+    // Amigos y complots: se piden al servicio cada 20 s mientras la app está abierta.
+    private var amistades: List<Nube.Amistad>? = null
+    private var complots: List<Nube.AlarmaAmigo>? = null
+    private var sinInternet = false
+    private var pidiendo = false
+    private val refrescoNube = object : Runnable {
+        override fun run() { refrescarNube(); reloj.postDelayed(this, 20_000) }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,12 +94,15 @@ class MainActivity : Activity() {
     override fun onResume() {
         super.onResume()
         Programador.reprogramarTodas(this)
+        Sincro.avisar(this)
         reloj.post(refrescoPeriodico)
+        reloj.post(refrescoNube)
     }
 
     override fun onPause() {
         super.onPause()
         reloj.removeCallbacks(refrescoPeriodico)
+        reloj.removeCallbacks(refrescoNube)
     }
 
     private fun encabezado(): View {
@@ -141,9 +152,9 @@ class MainActivity : Activity() {
         contenido.removeAllViews()
         when (actual) {
             Pestana.ALARMAS -> pestanaAlarmas()
-            Pestana.COMPLOTS -> proximamente(R.drawable.ic_complot, "Acá vas a ver las alarmas de tus amigos", "Cuando sumes cómplices, vas a ver a qué hora suena cada uno y cuánto falta para que cierre el complot.")
+            Pestana.COMPLOTS -> pestanaComplots()
             Pestana.AUDIOS -> proximamente(R.drawable.ic_campaign, "Próximamente", "Acá vas a grabar y guardar los sonidos más crueles para despertar a tus amigos.")
-            Pestana.AMIGOS -> proximamente(R.drawable.ic_group, "Tus cómplices", "Muy pronto vas a poder sumar amigos por su ID.")
+            Pestana.AMIGOS -> pestanaAmigos()
         }
     }
 
@@ -162,7 +173,13 @@ class MainActivity : Activity() {
 
     private fun pestanaAlarmas() {
         mostrarAvisos()
-        contenido.addView(globo("Todavía no tenés cómplices. Cuando sumes amigos, ellos van a elegir con qué despertarte."))
+        val cuantos = amistades?.count { it.aceptada } ?: 0
+        contenido.addView(globo(when {
+            cuantos == 1 -> "Tu cómplice ya está maquinando algo."
+            cuantos > 1 -> "Tus $cuantos cómplices ya están maquinando algo."
+            !Nube.conCuenta(this) -> "Entrá con Google y sumá amigos: ellos van a elegir con qué despertarte."
+            else -> "Todavía no tenés cómplices. Cuando sumes amigos, ellos van a elegir con qué despertarte."
+        }))
         val alarmas = Almacen.todas(this)
         if (alarmas.isEmpty()) {
             contenido.addView(Estilo.etiqueta(this, "No tenés alarmas. Dormí tranquilo… por ahora.", 17f, Estilo.TEXTO_SUAVE).apply {
@@ -274,6 +291,304 @@ class MainActivity : Activity() {
             t.addView(Estilo.espacio(this, 12))
             t.addView(Estilo.conIcono(Estilo.etiqueta(this, "Zafaste: esta alarma está apagada.", 15f, Estilo.TINTA_SUAVE), R.drawable.ic_shield, 20))
         }
+        return t
+    }
+
+    // ---------- Cuenta, amigos y complots ----------
+
+    /** Pide amigos y alarmas de amigos en otro hilo; redibuja solo si algo cambió. */
+    private fun refrescarNube() {
+        if (pidiendo || !Nube.conCuenta(this)) return
+        pidiendo = true
+        Nube.enSegundoPlano {
+            var am: List<Nube.Amistad>? = amistades
+            var co: List<Nube.AlarmaAmigo>? = complots
+            var fallo = false
+            try {
+                val p = Nube.miPerfil(this)
+                if (p != null) { am = Nube.amistades(this); co = Nube.alarmasDeAmigos(this) }
+            } catch (e: Exception) {
+                fallo = true
+            }
+            runOnUiThread {
+                pidiendo = false
+                val cambio = am != amistades || co != complots || fallo != sinInternet
+                amistades = am; complots = co; sinInternet = fallo
+                if (cambio && !isFinishing) mostrar()
+            }
+        }
+    }
+
+    /** Corre una acción con el servicio y después refresca. */
+    private fun conNube(accion: () -> Unit, listo: String? = null) {
+        Nube.enSegundoPlano {
+            val ok = try { accion(); true } catch (e: Exception) { false }
+            runOnUiThread {
+                Toast.makeText(this, if (ok) (listo ?: "Listo") else "No se pudo. ¿Hay internet?", Toast.LENGTH_SHORT).show()
+                refrescarNube()
+            }
+        }
+    }
+
+    /** Si falta cuenta o @ID, dibuja lo que corresponde y devuelve false. */
+    private fun cuentaLista(): Boolean {
+        if (!Nube.conCuenta(this)) {
+            val t = Estilo.tarjetaOscura(this).apply { gravity = Gravity.CENTER_HORIZONTAL }
+            t.addView(Estilo.icono(this, R.drawable.ic_complot, Estilo.MOSTAZA, 64))
+            t.addView(Estilo.espacio(this, 8))
+            t.addView(Estilo.tituloTexto(this, "Entrá para complotar", 24f).apply { gravity = Gravity.CENTER })
+            t.addView(Estilo.espacio(this, 8))
+            t.addView(Estilo.etiqueta(this, "Con tu cuenta de Google sumás amigos y ves a qué hora suenan. Tus alarmas suenan igual, con o sin cuenta.", 16f, Estilo.TEXTO_SUAVE).apply { gravity = Gravity.CENTER })
+            t.addView(Estilo.espacio(this, 18))
+            t.addView(Estilo.boton(this, "Entrar con Google", icono = R.drawable.ic_person) {
+                Nube.entrarConGoogle(this) { error ->
+                    if (error != null) Toast.makeText(this, error, Toast.LENGTH_LONG).show()
+                    amistades = null; complots = null
+                    mostrar(); refrescarNube()
+                }
+            })
+            contenido.addView(Estilo.espacio(this, 16))
+            contenido.addView(t)
+            return false
+        }
+        if (Nube.perfilGuardado(this) == null) {
+            val t = Estilo.tarjetaOscura(this).apply { gravity = Gravity.CENTER_HORIZONTAL }
+            t.addView(Estilo.icono(this, R.drawable.ic_person, Estilo.MOSTAZA, 56))
+            t.addView(Estilo.espacio(this, 8))
+            t.addView(Estilo.tituloTexto(this, "Elegí tu @ID", 24f).apply { gravity = Gravity.CENTER })
+            t.addView(Estilo.espacio(this, 8))
+            t.addView(Estilo.etiqueta(this, "Es como te van a buscar tus amigos. Tiene que ser único.", 16f, Estilo.TEXTO_SUAVE).apply { gravity = Gravity.CENTER })
+            t.addView(Estilo.espacio(this, 18))
+            t.addView(Estilo.boton(this, "Elegir mi @ID", icono = R.drawable.ic_edit) { elegirId() })
+            contenido.addView(Estilo.espacio(this, 16))
+            contenido.addView(t)
+            if (sinInternet) contenido.addView(avisoSinInternet())
+            return false
+        }
+        if (sinInternet) contenido.addView(avisoSinInternet())
+        return true
+    }
+
+    private fun avisoSinInternet() = Estilo.conIcono(Estilo.etiqueta(this, "Sin conexión: lo de tus amigos puede estar viejo. Tus alarmas suenan igual.", 15f, Estilo.TEXTO_SUAVE), R.drawable.ic_warning, 20).apply {
+        setPadding(0, Estilo.dp(this@MainActivity, 14), 0, Estilo.dp(this@MainActivity, 14))
+    }
+
+    private fun campo(pista: String) = android.widget.EditText(this).apply {
+        hint = pista
+        textSize = 18f
+        typeface = Estilo.textoFuerte(this@MainActivity)
+        setTextColor(Estilo.LINO)
+        setHintTextColor(Estilo.TEXTO_SUAVE)
+        isSingleLine = true
+        background = Estilo.redondo(Estilo.FONDO, Estilo.dpf(this@MainActivity, 18f), Estilo.dp(this@MainActivity, 2), Estilo.BORDE_FONDO)
+        val p = Estilo.dp(this@MainActivity, 14)
+        setPadding(p, p, p, p)
+        layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    }
+
+    private fun limpiarId(s: String) = s.trim().removePrefix("@").lowercase()
+    private val formatoId = Regex("^[a-z0-9_.]{3,20}$")
+
+    private fun elegirId() {
+        Hoja.abrir(this, "Tu @ID") { caja, d ->
+            caja.addView(Estilo.etiqueta(this, "De 3 a 20 letras, números, punto o guion bajo. Sin espacios.", 15f, Estilo.TEXTO_SUAVE))
+            caja.addView(Estilo.espacio(this, 10))
+            val usuario = campo("@nacho")
+            caja.addView(usuario)
+            caja.addView(Estilo.espacio(this, 14))
+            caja.addView(Estilo.etiqueta(this, "Tu nombre, como lo ven tus amigos", 15f, Estilo.TEXTO_SUAVE, fuerte = true))
+            caja.addView(Estilo.espacio(this, 8))
+            val nombre = campo("Nacho").apply { setText(Nube.nombreGoogle(this@MainActivity).take(40)) }
+            caja.addView(nombre)
+            caja.addView(Estilo.espacio(this, 10))
+            val error = Estilo.etiqueta(this, "", 15f, Color_BORRAR, fuerte = true)
+            caja.addView(error)
+            caja.addView(Estilo.espacio(this, 12))
+            caja.addView(Estilo.boton(this, "Guardar") {
+                val u = limpiarId(usuario.text.toString())
+                val n = nombre.text.toString().trim().take(40)
+                when {
+                    !formatoId.matches(u) -> error.text = "Ese @ID no sirve: 3 a 20 letras, números, punto o guion bajo."
+                    n.isEmpty() -> error.text = "Poné un nombre."
+                    else -> {
+                        error.text = "Guardando…"
+                        Nube.enSegundoPlano {
+                            val e = try { Nube.crearPerfil(this, u, n) } catch (x: Exception) { "No se pudo. ¿Hay internet?" }
+                            runOnUiThread {
+                                if (e == null) {
+                                    d.dismiss()
+                                    Toast.makeText(this, "Listo, sos @$u", Toast.LENGTH_SHORT).show()
+                                    Sincro.avisar(this); mostrar(); refrescarNube()
+                                } else error.text = e
+                            }
+                        }
+                    }
+                }
+            })
+            caja.addView(Estilo.espacio(this, 10))
+            caja.addView(Estilo.boton(this, "Cancelar", Estilo.TipoBoton.SUAVE, 16f) { d.dismiss() })
+        }
+    }
+
+    private fun tituloSeccion(txt: String) = Estilo.tituloTexto(this, txt, 20f, Estilo.MOSTAZA).apply {
+        setPadding(0, Estilo.dp(this@MainActivity, 18), 0, Estilo.dp(this@MainActivity, 8))
+    }
+
+    private fun botonChico(txt: String, tipo: Estilo.TipoBoton, icono: Int, accion: () -> Unit) =
+        Estilo.boton(this, txt, tipo, 14f, icono, accion).apply {
+            minHeight = Estilo.dp(this@MainActivity, 46)
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(Estilo.dp(this@MainActivity, 6), 0, 0, 0) }
+        }
+
+    /** Renglón con nombre y @ID de una persona, y botones a la derecha. */
+    private fun filaPersona(p: Nube.Perfil, vararg acciones: View): View {
+        val f = Estilo.fila(this).apply {
+            background = Estilo.redondo(Estilo.FONDO_ALTO, Estilo.dpf(this@MainActivity, 20f), Estilo.dp(this@MainActivity, 2), Estilo.BORDE_FONDO)
+            val q = Estilo.dp(this@MainActivity, 14)
+            setPadding(q, q, Estilo.dp(this@MainActivity, 10), q)
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(0, 0, 0, Estilo.dp(this@MainActivity, 10)) }
+        }
+        val textos = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; layoutParams = Estilo.ancho() }
+        textos.addView(Estilo.etiqueta(this, p.nombre, 17f, Estilo.LINO, fuerte = true))
+        textos.addView(Estilo.etiqueta(this, "@${p.usuario}", 15f, Estilo.MOSTAZA))
+        f.addView(textos)
+        acciones.forEach { f.addView(it) }
+        return f
+    }
+
+    private fun pestanaAmigos() {
+        if (!cuentaLista()) return
+        val yo = Nube.perfilGuardado(this)!!
+        val t = Estilo.tarjetaOscura(this)
+        t.addView(Estilo.tituloTexto(this, yo.nombre, 24f))
+        t.addView(Estilo.etiqueta(this, "@${yo.usuario}", 18f, Estilo.MOSTAZA, fuerte = true))
+        t.addView(Estilo.espacio(this, 6))
+        t.addView(Estilo.etiqueta(this, "Pasale tu @ID a tus amigos para que te sumen.", 15f, Estilo.TEXTO_SUAVE))
+        t.addView(Estilo.espacio(this, 12))
+        t.addView(Estilo.boton(this, "Salir de mi cuenta", Estilo.TipoBoton.SUAVE, 14f, R.drawable.ic_logout) {
+            Hoja.confirmar(this, "¿Salir de tu cuenta?", "Tus alarmas siguen sonando igual. Para ver complots vas a tener que volver a entrar.", "Sí, salir") {
+                Nube.enSegundoPlano {
+                    Nube.salir(this)
+                    runOnUiThread { amistades = null; complots = null; mostrar() }
+                }
+            }
+        }.apply { minHeight = Estilo.dp(this@MainActivity, 46) })
+        contenido.addView(t)
+        contenido.addView(Estilo.espacio(this, 16))
+        contenido.addView(Estilo.boton(this, "Sumar amigo", icono = R.drawable.ic_person_add) { buscarAmigo() })
+
+        val lista = amistades
+        if (lista == null) {
+            contenido.addView(Estilo.etiqueta(this, "Cargando…", 16f, Estilo.TEXTO_SUAVE).apply { setPadding(0, Estilo.dp(this@MainActivity, 18), 0, 0) })
+            return
+        }
+        val recibidas = lista.filter { !it.aceptada && !it.pedidaPorMi }
+        if (recibidas.isNotEmpty()) {
+            contenido.addView(tituloSeccion("Te quieren sumar"))
+            for (a in recibidas) contenido.addView(filaPersona(a.otro,
+                botonChico("Aceptar", Estilo.TipoBoton.PRINCIPAL, R.drawable.ic_check) { conNube({ Nube.aceptar(this, a.otro.id) }, "Ahora son cómplices") },
+                botonChico("", Estilo.TipoBoton.SUAVE, R.drawable.ic_close) {
+                    Hoja.confirmar(this, "¿Rechazar a ${a.otro.nombre}?", "No se va a enterar, pero no van a ser cómplices.", "Sí, rechazar") {
+                        conNube({ Nube.borrarAmistad(this, a.otro.id) }, "Rechazada")
+                    }
+                }.apply { contentDescription = "Rechazar" }))
+        }
+        val amigos = lista.filter { it.aceptada }
+        contenido.addView(tituloSeccion("Tus cómplices (${amigos.size})"))
+        if (amigos.isEmpty()) {
+            contenido.addView(Estilo.etiqueta(this, "Todavía no tenés cómplices. Sumá a alguien por su @ID.", 16f, Estilo.TEXTO_SUAVE))
+        }
+        for (a in amigos) contenido.addView(filaPersona(a.otro,
+            botonChico("", Estilo.TipoBoton.SUAVE, R.drawable.ic_close) {
+                Hoja.confirmar(this, "¿Sacar a ${a.otro.nombre}?", "Deja de ver tus alarmas y vos las suyas, desde ya.", "Sí, sacarlo") {
+                    conNube({ Nube.borrarAmistad(this, a.otro.id) }, "Listo, ya no son cómplices")
+                }
+            }.apply { contentDescription = "Sacar de amigos" }))
+        val enviadas = lista.filter { !it.aceptada && it.pedidaPorMi }
+        if (enviadas.isNotEmpty()) {
+            contenido.addView(tituloSeccion("Esperando respuesta"))
+            for (a in enviadas) contenido.addView(filaPersona(a.otro,
+                botonChico("Cancelar", Estilo.TipoBoton.SUAVE, 0) { conNube({ Nube.borrarAmistad(this, a.otro.id) }, "Solicitud cancelada") }))
+        }
+    }
+
+    private fun buscarAmigo() {
+        Hoja.abrir(this, "Sumar amigo") { caja, d ->
+            caja.addView(Estilo.etiqueta(this, "Escribí el @ID de tu amigo.", 15f, Estilo.TEXTO_SUAVE))
+            caja.addView(Estilo.espacio(this, 10))
+            val usuario = campo("@su_id")
+            caja.addView(usuario)
+            caja.addView(Estilo.espacio(this, 12))
+            val resultado = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+            fun mensaje(txt: String) { resultado.removeAllViews(); resultado.addView(Estilo.etiqueta(this, txt, 16f, Estilo.LINO, fuerte = true)) }
+            caja.addView(Estilo.boton(this, "Buscar", Estilo.TipoBoton.SECUNDARIO, 16f, R.drawable.ic_search) {
+                val u = limpiarId(usuario.text.toString())
+                if (!formatoId.matches(u)) { mensaje("Ese @ID no existe: son de 3 a 20 letras, números, punto o guion bajo."); return@boton }
+                mensaje("Buscando…")
+                Nube.enSegundoPlano {
+                    val p = try { Result.success(Nube.buscar(this, u)) } catch (e: Exception) { Result.failure(e) }
+                    runOnUiThread {
+                        val otro = p.getOrNull()
+                        val ya = amistades?.firstOrNull { it.otro.id == otro?.id }
+                        when {
+                            p.isFailure -> mensaje("No se pudo buscar. ¿Hay internet?")
+                            otro == null -> mensaje("No hay nadie con @$u.")
+                            otro.id == Nube.perfilGuardado(this)?.id -> mensaje("Ese sos vos.")
+                            ya?.aceptada == true -> mensaje("${otro.nombre} ya es tu cómplice.")
+                            ya != null && ya.pedidaPorMi -> mensaje("Ya le mandaste una solicitud a ${otro.nombre}.")
+                            else -> {
+                                resultado.removeAllViews()
+                                resultado.addView(filaPersona(otro))
+                                resultado.addView(Estilo.boton(this, if (ya != null) "Aceptar su solicitud" else "Mandar solicitud", icono = R.drawable.ic_person_add) {
+                                    d.dismiss()
+                                    if (ya != null) conNube({ Nube.aceptar(this, otro.id) }, "Ahora son cómplices")
+                                    else conNube({ Nube.pedirAmistad(this, otro.id) }, "Solicitud enviada a @${otro.usuario}")
+                                })
+                            }
+                        }
+                    }
+                }
+            })
+            caja.addView(Estilo.espacio(this, 14))
+            caja.addView(resultado)
+            caja.addView(Estilo.espacio(this, 10))
+            caja.addView(Estilo.boton(this, "Cerrar", Estilo.TipoBoton.SUAVE, 16f) { d.dismiss() })
+        }
+    }
+
+    private fun pestanaComplots() {
+        if (!cuentaLista()) return
+        val lista = complots
+        val amigos = amistades?.count { it.aceptada } ?: 0
+        when {
+            lista == null -> contenido.addView(Estilo.etiqueta(this, "Cargando…", 16f, Estilo.TEXTO_SUAVE))
+            amigos == 0 -> {
+                proximamente(R.drawable.ic_group, "Sin cómplices todavía", "Sumá amigos por su @ID y acá vas a ver a qué hora suena cada uno.")
+                contenido.addView(Estilo.espacio(this, 16))
+                contenido.addView(Estilo.boton(this, "Sumar amigos", icono = R.drawable.ic_person_add) { actual = Pestana.AMIGOS; mostrar() })
+            }
+            lista.isEmpty() -> proximamente(R.drawable.ic_complot, "Nadie tiene alarmas", "Tus cómplices no tienen alarmas puestas. Por ahora duermen tranquilos.")
+            else -> {
+                val ahora = System.currentTimeMillis()
+                val orden = lista.sortedWith(compareBy({ !it.activa }, { it.proximoDisparo(ahora) }))
+                for (a in orden) contenido.addView(tarjetaComplot(a, ahora))
+                contenido.addView(Estilo.etiqueta(this, "Se actualiza solo.", 14f, Estilo.TEXTO_SUAVE).apply { gravity = Gravity.CENTER })
+            }
+        }
+    }
+
+    private fun tarjetaComplot(a: Nube.AlarmaAmigo, ahora: Long): View {
+        val t = Estilo.tarjetaOscura(this).apply {
+            layoutParams = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT).apply { setMargins(0, 0, 0, Estilo.dp(this@MainActivity, 14)) }
+        }
+        t.addView(Estilo.etiqueta(this, "${a.dueno.nombre} · @${a.dueno.usuario}", 16f, Estilo.MOSTAZA, fuerte = true))
+        t.addView(Estilo.tituloTexto(this, "%02d:%02d".format(a.hora, a.minuto), 48f, if (a.activa) Estilo.LINO else Estilo.TEXTO_SUAVE, extra = true))
+        t.addView(Estilo.etiqueta(this, Alarma(0, a.hora, a.minuto, a.dias, 0).textoDias(), 15f, Estilo.TEXTO_SUAVE, fuerte = true))
+        t.addView(Estilo.espacio(this, 12))
+        t.addView(Estilo.fila(this).apply {
+            if (a.activa) addView(chipCierre(this@MainActivity, a.proximoDisparo(ahora) - 15 * 60_000L - ahora))
+            else addView(Estilo.chip(this@MainActivity, "Apagada: zafó", Estilo.FONDO, Estilo.TEXTO_SUAVE, Estilo.BORDE_FONDO, R.drawable.ic_shield))
+        })
         return t
     }
 
