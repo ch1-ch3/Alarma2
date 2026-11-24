@@ -1,6 +1,21 @@
 <resources>
-    <style name="Tema" parent="android:Theme.Material.Light.NoActionBar" />
-    <style name="TemaAlarma" parent="android:Theme.Material.NoActionBar">
-        <item name="android:windowBackground">#C62828</item>
+    <!-- Colores en diseno/ESTILO.md -->
+    <style name="Tema" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/fondo</item>
+        <item name="android:colorAccent">@color/mostaza</item>
+        <item name="android:colorPrimary">@color/fondo</item>
+        <item name="android:statusBarColor">@color/fondo</item>
+        <item name="android:navigationBarColor">@color/mostaza</item>
     </style>
+    <style name="TemaAlarma" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/fondo</item>
+        <item name="android:statusBarColor">@color/fondo</item>
+        <item name="android:navigationBarColor">@color/fondo</item>
+    </style>
+    <!-- Reloj de ruedas para elegir la hora: más grande y fácil que el de agujas -->
+    <style name="RelojRueda" parent="android:Widget.Material.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
+    <color name="fondo">#15291D</color>
+    <color name="mostaza">#F4B731</color>
 </resources>
