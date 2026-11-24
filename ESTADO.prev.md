@@ -1,4 +1,4 @@
-# ESTADO — Alarma2 (nombre provisorio) · Proyecto claude.ai: Alarma2 (a confirmar) · v2 · 2026-11-24
+# ESTADO — Alarma2 (nombre provisorio) · Proyecto claude.ai: Alarma2 (a confirmar) · v3 · 2026-11-24
 
 Último retorno procesado: R1
 
@@ -18,19 +18,19 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 ## 3. Fase actual
 
 - **F#**: F2
-- **Tarea**: elegir el servicio gratuito por internet de toda la app (I2) y construir con él las cuentas y los amigos.
-- **Incluye**: comparar servicios gratuitos que no pidan tarjeta y cubran entrar con Google, datos compartidos, guardar audios de 30 s, avisos al celular y tareas a una hora fija (el cierre de votación de F3); elegir uno y anotar por qué. Entrar con Google; elegir ID único y nombre; agregar amigo por ID; aceptar o rechazar; eliminar amigo. Las alarmas se suben al servicio y los amigos las ven en una lista con la hora y cuánto falta para el cierre (15 min antes). Reglas del servicio: solo el dueño cambia sus alarmas, solo sus amigos las ven, eliminar corta el acceso.
-- **No incluye**: propuestas, votos, audios, avisos, revelación, link de invitación (D8), diseño final.
-- **Entradas**: `app-android/` (la app de F1), `ENTREVISTA.md` puntos 3 ("Entrar y armar el grupo", "Los amigos") y 6, `entregables/F1_pruebas.md` solo si hace falta un dato del celular.
+- **Tarea**: elegir el servicio gratuito por internet de toda la app (I2), definir el estilo visual de la app (D10) y construir con ambos las cuentas y los amigos.
+- **Incluye**: comparar servicios gratuitos que no pidan tarjeta y cubran entrar con Google, datos compartidos, guardar audios de 30 s, avisos al celular y tareas a una hora fija (el cierre de votación de F3); elegir uno y anotar por qué. Entrar con Google; elegir ID único y nombre; agregar amigo por ID; aceptar o rechazar; eliminar amigo. Las alarmas se suben al servicio y los amigos las ven en una lista con la hora y cuánto falta para el cierre (15 min antes). Reglas del servicio: solo el dueño cambia sus alarmas, solo sus amigos las ven, eliminar corta el acceso. Estilo visual (D10): guía corta de colores, letras, botones y navegación, aplicada a las pantallas de F1 y a las nuevas; el usuario aprueba el estilo en su celular antes de seguir.
+- **No incluye**: propuestas, votos, audios, avisos, revelación, link de invitación (D8), puntos o rachas, nombre e ícono definitivos, pantallas de F3–F4 (solo se dejan previstas en la navegación).
+- **Entradas**: `app-android/` (la app de F1), `ENTREVISTA.md` puntos 3 ("Entrar y armar el grupo", "Los amigos") y 6, `diseno/referencia_stitch/` (referencia aproximada, D11), `entregables/F1_pruebas.md` solo si hace falta un dato del celular.
 - **Supuestos**: S2, S5, S7.
 - **Criterio de salida**:
-  - Avanzar: el celular del usuario y un segundo aparato (emulador en la compu o celular de un amigo), con dos cuentas de Google distintas, se agregan como amigos; cada uno ve las alarmas del otro; un cambio de hora aparece en el otro en menos de un minuto; al eliminar, deja de verlas; el amigo no puede cambiar la alarma ajena; y la alarma sigue sonando en modo avión.
+  - Avanzar: el usuario aprobó el estilo en su celular; el celular del usuario y un segundo aparato (emulador en la compu o celular de un amigo), con dos cuentas de Google distintas, se agregan como amigos; cada uno ve las alarmas del otro; un cambio de hora aparece en el otro en menos de un minuto; al eliminar, deja de verlas; el amigo no puede cambiar la alarma ajena; y la alarma sigue sonando en modo avión.
   - Corregir: algo de lo anterior falla con arreglo dentro del servicio elegido.
   - Pivotar: ningún servicio gratis sin tarjeta cubre lo necesario. Decide el usuario.
 - **Ejecuta**: Claude, chat de ejecución sobre la carpeta. El usuario inicia sesión él mismo donde haga falta su cuenta de Google y hace las pruebas en el celular.
 - **Destino**: la app en el celular del usuario y en el segundo aparato; accede a la carpeta.
 - **Audiencia**: el usuario, sin palabras técnicas.
-- **Formato del entregable**: app actualizada en `app-android/`; `entregables/F2_servicio.md` (servicios comparados, elegido y por qué, límites gratis); `entregables/F2_pruebas.md` (tabla de pruebas).
+- **Formato del entregable**: app actualizada en `app-android/`; `diseno/ESTILO.md` (guía del estilo, la usan F3 y F4); `entregables/F2_servicio.md` (servicios comparados, elegido y por qué, límites gratis); `entregables/F2_pruebas.md` (tabla de pruebas).
 - **Indicaciones de ejecución**:
   - Nada pago ni con tarjeta (D2). Claude no escribe contraseñas: el usuario entra él mismo.
   - No romper lo de F1: repetir la prueba de pantalla bloqueada y una en modo avión (D4).
@@ -83,6 +83,8 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 | D7 | Sonido de reserva grave, sintetizado | Pedido del usuario en F1 (desvío R1) | 11-24 |
 | D8 | Amigos solo por ID en F2; link de invitación después | Achica F2; el link es comodidad | 11-24 |
 | D9 | Las pruebas se comprueban con el registro del celular | En F1 hubo respuestas antes de terminar | 11-24 |
+| D10 | Interfaz pastel, clara, divertida, amigable e intuitiva, inspirada en apps exitosas sin copiarlas | Pedido del usuario | 11-24 |
+| D11 | El diseño de Stitch es referencia aproximada, no a seguir al pie de la letra; se puede proponer otro | Pedido del usuario | 11-24 |
 
 ## 8. Próxima acción
 
@@ -90,7 +92,8 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 
 ## 9. Temas abiertos
 
-- Nombre de la app, estética y tono: antes de F4.
+- Nombre de la app: candidato "Complot" (del diseño de Stitch), sin confirmar. Antes de F5.
+- Puntos y rachas (aparecen en Stitch): no están en la entrevista; fuera de v1 salvo que el usuario los pida.
 - Link de invitación (D8).
 - Edad mínima, denuncias, banco de 30–50 sonidos: segunda vuelta (F3 usa ~10).
 - Espiar con una segunda cuenta: no se frena en v1.
@@ -101,6 +104,7 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 
 - 2026-11-10: entrevista. 2026-11-11: plan v1.
 - 2026-11-24: R1, F1 cumple. Las 5 pruebas sonaron, con loop, posponer y auto-posponer. Arreglada la falla al reiniciar. Avanzar a F2.
+- 2026-11-24: v3, el usuario sumó a F2 el estilo visual (D10, D11) y pasó un diseño de Stitch como referencia.
 
 ## 11. Fuentes
 
@@ -108,3 +112,4 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 - `app-android/`: código de la app (F1).
 - `entregables/F1_pruebas.md`: celular, pruebas y fallas de F1.
 - `RETORNOS.md`: R1.
+- `diseno/referencia_stitch/`: 4 pantallas de Stitch (mis alarmas, complots, sala de votación, revelación) y su guía de estilo oscuro verde y mostaza. Referencia aproximada (D11).

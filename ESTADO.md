@@ -1,4 +1,4 @@
-# ESTADO — Alarma2 (nombre provisorio) · Proyecto claude.ai: Alarma2 (a confirmar) · v3 · 2026-11-24
+# ESTADO — Alarma2 (nombre provisorio) · Proyecto claude.ai: Alarma2 (a confirmar) · v4 · 2026-11-24
 
 Último retorno procesado: R1
 
@@ -83,8 +83,8 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 | D7 | Sonido de reserva grave, sintetizado | Pedido del usuario en F1 (desvío R1) | 11-24 |
 | D8 | Amigos solo por ID en F2; link de invitación después | Achica F2; el link es comodidad | 11-24 |
 | D9 | Las pruebas se comprueban con el registro del celular | En F1 hubo respuestas antes de terminar | 11-24 |
-| D10 | Interfaz pastel, clara, divertida, amigable e intuitiva, inspirada en apps exitosas sin copiarlas | Pedido del usuario | 11-24 |
-| D11 | El diseño de Stitch es referencia aproximada, no a seguir al pie de la letra; se puede proponer otro | Pedido del usuario | 11-24 |
+| D10 | Interfaz vistosa, divertida, amigable e intuitiva, inspirada en apps exitosas sin copiarlas. Colores por ahora: los de Stitch (verde oscuro, mostaza, café); reemplaza el "pastel" del 11-24 | Pedido del usuario | 11-24 |
+| D11 | El diseño de Stitch es la base provisoria, no a seguir al pie de la letra; se puede mejorar | Al usuario no lo convence del todo | 11-24 |
 
 ## 8. Próxima acción
 
@@ -92,6 +92,7 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 
 ## 9. Temas abiertos
 
+- Interfaz definitiva: el usuario no sabe todavía cómo la quiere. Revisarla con la app en uso, antes de F5.
 - Nombre de la app: candidato "Complot" (del diseño de Stitch), sin confirmar. Antes de F5.
 - Puntos y rachas (aparecen en Stitch): no están en la entrevista; fuera de v1 salvo que el usuario los pida.
 - Link de invitación (D8).
@@ -105,6 +106,7 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 - 2026-11-10: entrevista. 2026-11-11: plan v1.
 - 2026-11-24: R1, F1 cumple. Las 5 pruebas sonaron, con loop, posponer y auto-posponer. Arreglada la falla al reiniciar. Avanzar a F2.
 - 2026-11-24: v3, el usuario sumó a F2 el estilo visual (D10, D11) y pasó un diseño de Stitch como referencia.
+- 2026-11-24: v4, se dejan los colores de Stitch en vez de pastel (D10). Prompt F2_v2 reemplaza a F2_v1, que no se ejecutó.
 
 ## 11. Fuentes
 
@@ -112,4 +114,4 @@ La segunda vuelta (comunidad, reacciones, compartir, denunciar, tienda) se plani
 - `app-android/`: código de la app (F1).
 - `entregables/F1_pruebas.md`: celular, pruebas y fallas de F1.
 - `RETORNOS.md`: R1.
-- `diseno/referencia_stitch/`: 4 pantallas de Stitch (mis alarmas, complots, sala de votación, revelación) y su guía de estilo oscuro verde y mostaza. Referencia aproximada (D11).
+- `diseno/referencia_stitch/`: 4 pantallas de Stitch (mis alarmas, complots, sala de votación, revelación) y su guía de estilo oscuro verde y mostaza. Base provisoria (D11).
